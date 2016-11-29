@@ -22,12 +22,23 @@ class GameScene: SKScene{
         
        // createTeams();
        // var hej:NineMenMorrisRules = NineMenMorrisRules()
-        
-        
         for child in self.children {
             
- 
-            if (child.name?.contains("R"))!{
+   
+            
+            
+            if (child.name?.contains("R")) != nil{
+                red.setValue(0, forKey: child.name!)
+            }else if (child.name?.contains("B")) != nil{
+                blue.setValue(0, forKey: child.name!)
+            }else if (child.name?.contains("board")) != nil{
+                child.zPosition = -10
+            }else if (child.name?.characters.count == 1){
+                boardplaces.append(child.name!)
+            }
+
+
+           /* if (child.name?.contains("R"))!{
                 red.setValue(0, forKey: child.name!)
             }else if (child.name?.contains("B"))!{
                 blue.setValue(0, forKey: child.name!)
@@ -35,22 +46,22 @@ class GameScene: SKScene{
                 child.zPosition = -10
             }else if child.name?.characters.count == 1 {
                 boardplaces.append(child.name!)
-            }
+            }*/
            // print("name : "  + Int(child.name!))
            /* switch child.name{
                 case "hotspot"?: break
                     //self.boardplaces.setValue([child as! SKSpriteNode,false], forKey: String(describing: child as! SKSpriteNode ))
-                case "teamOne"?: break
+                case "B1"?:print("Blue")
                    // child.name!.append(String(teamOne.count))
                    // print("\(child.name)")
                  //   let arr:NSMutableArray = [child as! SKShapeNode,false]
                    // self.teamOne.setValue(arr, forKey: child.name!)
-                case "teamTwo"?: break
+                case "R1"?: break
                   //  child.name!.append(String(teamTwo.count))
                    // print("\(child.name)")
                   //  let arr:NSMutableArray = [child as! SKShapeNode,false]
                    // self.teamTwo.setValue(arr, forKey: child.name!)
-                case "board"?:
+                case "board"?: break
                                     default: break
             }*/
         }
