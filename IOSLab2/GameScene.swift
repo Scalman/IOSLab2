@@ -25,18 +25,41 @@ class GameScene: SKScene{
         for child in self.children {
             
    
+            if let roomCount = child.name?.contains("R") {
+                if roomCount{
+                   red.setValue(0, forKey: child.name!)
+                }
+            }
+            if let roomCount = child.name?.contains("B") {
+                if roomCount{
+                    blue.setValue(0, forKey: child.name!)
+                }
+            }
+            if let roomCount = child.name?.contains("board") {
+                if roomCount{
+                    child.zPosition = -10
+                }
+            }
+            if child.name?.characters.count != nil{
+                if (child.name?.characters.count)! < 3{
+                    boardplaces.append(child.name!)
+                }
+            }
             
-            
-            if (child.name?.contains("R")) != nil{
+           /* if (child.name?.contains("R"))?{
+                print(child.name!)
                 red.setValue(0, forKey: child.name!)
-            }else if (child.name?.contains("B")) != nil{
+            }*/
+            /*else if (child.name?.contains("B")) != nil{
                 blue.setValue(0, forKey: child.name!)
             }else if (child.name?.contains("board")) != nil{
                 child.zPosition = -10
             }else if (child.name?.characters.count == 1){
                 boardplaces.append(child.name!)
-            }
+            }*/
 
+
+            
 
            /* if (child.name?.contains("R"))!{
                 red.setValue(0, forKey: child.name!)
@@ -65,6 +88,9 @@ class GameScene: SKScene{
                                     default: break
             }*/
         }
+        print(red.count)
+        print(blue.count)
+        print(boardplaces.count)
         
     }
     
@@ -106,11 +132,11 @@ class GameScene: SKScene{
                 }else if NINE_MEN_GAME_RULES.playerTurn() == 1 && !(node.name?.contains("B"))!{
                     let tmp = blue[pieceSelected!.name!] as! Int
                     moveSelectedBrick(node: node,tmp: tmp)
+                }else if (red.value(forKey: node.name!) != nil) && NINE_MEN_GAME_RULES.playerTurn() == 2{
+                    //selectPiece(node: node as! SKSpriteNode)
+                }else if(blue.value(forKey: node.name!) != nil) && NINE_MEN_GAME_RULES.playerTurn() == 1{
+                    //selectPiece(node: node as! SKSpriteNode)
                 }
-            }else if (red.value(forKey: node.name!) != nil) && NINE_MEN_GAME_RULES.playerTurn() == 2{
-                selectPiece(node: node as! SKShapeNode)
-            }else if(blue.value(forKey: node.name!) != nil) && NINE_MEN_GAME_RULES.playerTurn() == 1{
-                selectPiece(node: node as! SKShapeNode)
             }
             
             
@@ -184,20 +210,15 @@ class GameScene: SKScene{
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
 
-        /*for touch: AnyObject in touches {
-            
-            // detect touch in the scene
+       /* for touch: AnyObject in touches {
             let location = touch.location(in: self)
             //let kuk = touch.
-            let node = self.atPoint(location) //nodeAtPoint:location
-            
-            if (node.name?.contains("red"))! && NINE_MEN_GAME_RULES.playerTurn() == "red"{
-                selectPiece(node: node as! SKShapeNode)
-            }
-            if (node.name?.contains("blue"))! && NINE_MEN_GAME_RULES.playerTurn() == "blue"{
-                selectPiece(node: node as! SKShapeNode)
-            }
+            let node = self.atPoint(location)
+            print(node.name!)
+
         }*/
+        
+        
     }
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
