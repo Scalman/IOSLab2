@@ -32,7 +32,6 @@ class GameScene: SKScene{
             }
             if let roomCount = child.name?.contains("board") {
                 if roomCount{
-                    print(child.name!)
                     child.zPosition = -10
                 }
             }
