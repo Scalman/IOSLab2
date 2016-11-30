@@ -117,26 +117,22 @@ class GameScene: SKScene{
             let location = touch.location(in: self)
             //let kuk = touch.
             let node = self.atPoint(location) //nodeAtPoint:location
-          
-            if boardplaces.contains(node.name!){
-                
-                print("boardplaces klicked")
-            }
             
             
             if pieceSelected != nil && boardplaces.contains(node.name!){
-                
                 if NINE_MEN_GAME_RULES.playerTurn() == 2 && !(node.name?.contains("R"))!{
                     let tmp = red[pieceSelected!.name!] as! Int
                     moveSelectedBrick(node: node,tmp: tmp)
+                    pieceSelected = nil
                 }else if NINE_MEN_GAME_RULES.playerTurn() == 1 && !(node.name?.contains("B"))!{
                     let tmp = blue[pieceSelected!.name!] as! Int
                     moveSelectedBrick(node: node,tmp: tmp)
-                }else if (red.value(forKey: node.name!) != nil) && NINE_MEN_GAME_RULES.playerTurn() == 2{
-                    //selectPiece(node: node as! SKSpriteNode)
-                }else if(blue.value(forKey: node.name!) != nil) && NINE_MEN_GAME_RULES.playerTurn() == 1{
-                    //selectPiece(node: node as! SKSpriteNode)
+                    pieceSelected = nil
                 }
+            } else if (red.value(forKey: node.name!) != nil) && NINE_MEN_GAME_RULES.playerTurn() == 2 {
+                selectPiece(node: node as! SKShapeNode)
+            }else if(blue.value(forKey: node.name!) != nil) && NINE_MEN_GAME_RULES.playerTurn() == 1 {
+                selectPiece(node: node as! SKShapeNode)
             }
             
             
