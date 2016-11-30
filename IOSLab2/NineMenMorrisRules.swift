@@ -54,7 +54,7 @@ class NineMenMorrisRules {
                         gameplan[To] = RED_MARKER
                         redmarker -= 1
                         turn = BLUE_MOVES
-                        //gameplan[From] = EMPTY_SPACE
+                        gameplan[From] = EMPTY_SPACE
                         return true
                     }
                 }
@@ -64,7 +64,7 @@ class NineMenMorrisRules {
                     if (valid == true) {
                         gameplan[To] = RED_MARKER
                         turn = BLUE_MOVES
-                        //gameplan[From] = EMPTY_SPACE
+                        gameplan[From] = EMPTY_SPACE
                         return true;
                     } else {
                         return false
@@ -78,7 +78,7 @@ class NineMenMorrisRules {
                         gameplan[To] = BLUE_MARKER
                         bluemarker -= 1
                         turn = RED_MOVES
-                        //gameplan[From] = EMPTY_SPACE
+                        gameplan[From] = EMPTY_SPACE
                         return true;
                     }
                 }
@@ -87,7 +87,7 @@ class NineMenMorrisRules {
                     if (valid == true) {
                         gameplan[To] = BLUE_MARKER;
                         turn = RED_MOVES;
-                        //gameplan[From] = EMPTY_SPACE
+                        gameplan[From] = EMPTY_SPACE
                         return true;
                     } else {
                         return false;
@@ -147,6 +147,7 @@ class NineMenMorrisRules {
      * Returns true if the marker where successfully removed
      */
     func remove(From:Int, color:Int) -> Bool {
+        print("From ",From, "color ",color )
         if (gameplan[From] == color) {
             gameplan[From] = EMPTY_SPACE;
             return true;
@@ -248,6 +249,9 @@ class NineMenMorrisRules {
     }
     func togglePlayerTurn () {
         turn = turn == 1 ? 2:1
+    }
+    public func colorToRemove ()->Int {
+        return turn == 1 ? 5:4
     }
     func playerTurn() -> Int {
         return turn == 2 ? 2 : 1

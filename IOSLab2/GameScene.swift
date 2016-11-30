@@ -11,8 +11,8 @@ import GameplayKit
 
 class GameScene: SKScene{
     
-    private var red : NSMutableDictionary = NSMutableDictionary()
-    private var blue : NSMutableDictionary = NSMutableDictionary()
+    private var red : [String:Int] = [:]
+    private var blue : [String:Int] = [:]
     private var boardplaces:[String] = []
     private var pieceSelected:SKShapeNode? = nil
     private var NINE_MEN_GAME_RULES:NineMenMorrisRules = NineMenMorrisRules()
@@ -22,16 +22,17 @@ class GameScene: SKScene{
    
             if let roomCount = child.name?.contains("R") {
                 if roomCount{
-                   red.setValue(0, forKey: child.name!)
+                    red[child.name!]=0
                 }
             }
             if let roomCount = child.name?.contains("B") {
                 if roomCount{
-                    blue.setValue(0, forKey: child.name!)
+                    blue[child.name!]=0
                 }
             }
             if let roomCount = child.name?.contains("board") {
                 if roomCount{
+                    print(child.name!)
                     child.zPosition = -10
                 }
             }
@@ -89,26 +90,26 @@ class GameScene: SKScene{
 
             let node = self.atPoint(location) //nodeAtPoint:location
             if pieceSelected == nil && !REMOVE_STAGE{
-                    if (red.value(forKey: node.name!) != nil) && NINE_MEN_GAME_RULES.playerTurn() == 2 {
+                    if (red[node.name!] != nil) && NINE_MEN_GAME_RULES.playerTurn() == 2 {
                         selectPiece(node: node as! SKShapeNode)
-                    }else if(blue.value(forKey: node.name!) != nil) && NINE_MEN_GAME_RULES.playerTurn() == 1 {
+                    }else if(blue[node.name!] != nil) && NINE_MEN_GAME_RULES.playerTurn() == 1 {
                         selectPiece(node: node as! SKShapeNode)
                     }
                 } else if pieceSelected != nil {
                     if boardplaces.contains(node.name!){
                         if NINE_MEN_GAME_RULES.playerTurn() == 2 && !(node.name?.contains("R"))!{
-                            let tmp = red[pieceSelected!.name!] as! Int
-                            moveSelectedBrick(node: node,tmp: tmp,team:red)
+                            let tmp = red[pieceSelected!.name!]
+                            red = moveSelectedBrick(node: node,tmp: tmp!,team:red)
                         }else if NINE_MEN_GAME_RULES.playerTurn() == 1 && !(node.name?.contains("B"))!{
-                            let tmp = blue[pieceSelected!.name!] as! Int
-                            moveSelectedBrick(node: node,tmp: tmp,team:blue)
+                            let tmp = blue[pieceSelected!.name!]
+                            blue = moveSelectedBrick(node: node,tmp: tmp!,team:blue)
                         }
                     }
             } else {
-                if (red.value(forKey: node.name!) != nil) && NINE_MEN_GAME_RULES.playerTurn() == 1 {
-                    selectPieceToRemove(node: node as! SKShapeNode)
-                }else if(blue.value(forKey: node.name!) != nil) && NINE_MEN_GAME_RULES.playerTurn() == 2 {
-                    selectPieceToRemove(node: node as! SKShapeNode)
+                if (red[node.name!] != nil) && NINE_MEN_GAME_RULES.playerTurn() == 1 {
+                    red = selectPieceToRemove(node: node as! SKShapeNode,team: red)
+                }else if(blue[node.name!] != nil) && NINE_MEN_GAME_RULES.playerTurn() == 2 {
+                    blue = selectPieceToRemove(node: node as! SKShapeNode,team: blue)
                 }
             }
             
@@ -116,13 +117,15 @@ class GameScene: SKScene{
     }
 
     
-    func moveSelectedBrick(node:SKNode,tmp: Int, team:NSMutableDictionary){
+    func moveSelectedBrick(node:SKNode,tmp: Int, team:[String:Int])->[String:Int]{
+        var team = team
         let nodePos = node.name! as String
         if NINE_MEN_GAME_RULES.legalMove(To: Int(nodePos)!, From: tmp , color: NINE_MEN_GAME_RULES.playerTurn()){
             print("legal")
-            team.value(forKey: pieceSelected!.name!)
-            team[pieceSelected?.name! as Any] = node.name
+            team[(pieceSelected?.name!)!] = Int(node.name!)
+            //self.team[(pieceSelected?.name)!] = team[(pieceSelected?.name!)!]
             movePiece(node: node)
+            
             if NINE_MEN_GAME_RULES.remove(to: Int(nodePos)!) {
                 NINE_MEN_GAME_RULES.togglePlayerTurn()
                 REMOVE_STAGE = true
@@ -130,6 +133,7 @@ class GameScene: SKScene{
         } else {
             print("illegal")
         }
+        return team
     }
     
     func selectPiece(node:SKShapeNode){
@@ -137,10 +141,16 @@ class GameScene: SKScene{
         self.pieceSelected = node
         node.glowWidth = 10.0
     }
-    func selectPieceToRemove(node:SKShapeNode){
-        self.pieceSelected?.glowWidth = 1
-        self.pieceSelected = node
-        node.glowWidth = 10.0
+    func selectPieceToRemove(node:SKNode, team:[String:Int])->[String:Int]{
+        var team = team
+        if NINE_MEN_GAME_RULES.remove(From: team[node.name!]!, color: NINE_MEN_GAME_RULES.colorToRemove()){
+            team[node.name!] = nil
+            removeChildren(in: [node])
+            REMOVE_STAGE = false
+        }
+        
+        
+        return team
     }
     
     func movePiece(node: SKNode){
