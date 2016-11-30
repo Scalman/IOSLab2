@@ -49,7 +49,7 @@ class NineMenMorrisRules {
     public func legalMove(To:Int,From:Int,color:Int) -> Bool{
         if (color == turn) {
             if (turn == RED_MOVES) {
-				if (redmarker >= 0) {
+				if (redmarker > 0) && From==0{
                     if (gameplan[To] == EMPTY_SPACE) {
                         gameplan[To] = RED_MARKER
                         redmarker -= 1
@@ -59,7 +59,7 @@ class NineMenMorrisRules {
                     }
                 }
 				/*else*/
-				if (gameplan[To] == EMPTY_SPACE) {
+				if (gameplan[To] == EMPTY_SPACE) && redmarker < 1{
                     let valid:Bool = isValidMove(to: To, from: From)
                     if (valid == true) {
                         gameplan[To] = RED_MARKER
@@ -73,7 +73,7 @@ class NineMenMorrisRules {
                     return false
 				}
             } else {
-				if (bluemarker >= 0) {
+				if (bluemarker > 0) && From==0{
                     if (gameplan[To] == EMPTY_SPACE) {
                         gameplan[To] = BLUE_MARKER
                         bluemarker -= 1
@@ -82,7 +82,7 @@ class NineMenMorrisRules {
                         return true;
                     }
                 }
-                if (gameplan[To] == EMPTY_SPACE) {
+                if (gameplan[To] == EMPTY_SPACE) && bluemarker < 1{
                     let valid:Bool = isValidMove(to: To, from: From);
                     if (valid == true) {
                         gameplan[To] = BLUE_MARKER;

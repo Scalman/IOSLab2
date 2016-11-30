@@ -89,23 +89,23 @@ class GameScene: SKScene{
             let location = touch.location(in: self)
 
             let node = self.atPoint(location) //nodeAtPoint:location
-            if pieceSelected == nil && !REMOVE_STAGE{
+            
+        
+                if boardplaces.contains(node.name!) && !REMOVE_STAGE{
+                    if NINE_MEN_GAME_RULES.playerTurn() == 2 && !(node.name?.contains("R"))!{
+                        let tmp = red[pieceSelected!.name!]
+                        red = moveSelectedBrick(node: node,tmp: tmp!,team:red)
+                    }else if NINE_MEN_GAME_RULES.playerTurn() == 1 && !(node.name?.contains("B"))!{
+                        let tmp = blue[pieceSelected!.name!]
+                        blue = moveSelectedBrick(node: node,tmp: tmp!,team:blue)
+                    }
+                } else if !REMOVE_STAGE{
                     if (red[node.name!] != nil) && NINE_MEN_GAME_RULES.playerTurn() == 2 {
                         selectPiece(node: node as! SKShapeNode)
                     }else if(blue[node.name!] != nil) && NINE_MEN_GAME_RULES.playerTurn() == 1 {
                         selectPiece(node: node as! SKShapeNode)
                     }
-                } else if pieceSelected != nil {
-                    if boardplaces.contains(node.name!){
-                        if NINE_MEN_GAME_RULES.playerTurn() == 2 && !(node.name?.contains("R"))!{
-                            let tmp = red[pieceSelected!.name!]
-                            red = moveSelectedBrick(node: node,tmp: tmp!,team:red)
-                        }else if NINE_MEN_GAME_RULES.playerTurn() == 1 && !(node.name?.contains("B"))!{
-                            let tmp = blue[pieceSelected!.name!]
-                            blue = moveSelectedBrick(node: node,tmp: tmp!,team:blue)
-                        }
-                    }
-            } else {
+                }  else {
                 if (red[node.name!] != nil) && NINE_MEN_GAME_RULES.playerTurn() == 1 {
                     red = selectPieceToRemove(node: node as! SKShapeNode,team: red)
                 }else if(blue[node.name!] != nil) && NINE_MEN_GAME_RULES.playerTurn() == 2 {
@@ -148,8 +148,17 @@ class GameScene: SKScene{
             removeChildren(in: [node])
             REMOVE_STAGE = false
         }
+        NINE_MEN_GAME_RULES.togglePlayerTurn()
         
-        
+        if NINE_MEN_GAME_RULES.win(color:NINE_MEN_GAME_RULES.colorToRemove()) {
+            print("game over")
+            if let scene = SKScene(fileNamed: "GameScene") {
+                self.removeAllChildren()
+                self.removeAllActions()
+                scene.scaleMode = .aspectFill
+                self.view?.presentScene(scene)
+            }
+        }
         return team
     }
     
