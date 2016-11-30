@@ -8,19 +8,27 @@
 
 import SpriteKit
 import GameplayKit
+import UIKit
 
 class GameScene: SKScene{
     
     private var red : [String:Int] = [:]
     private var blue : [String:Int] = [:]
     private var boardplaces:[String] = []
-    private var pieceSelected:SKShapeNode? = nil
+    private var pieceSelected:SKSpriteNode? = nil
     private var NINE_MEN_GAME_RULES:NineMenMorrisRules = NineMenMorrisRules()
     private var REMOVE_STAGE:Bool = false
+    private var ScoreTextOne = SKLabelNode()
+    private var ScoreTextTwo = SKLabelNode()
+    private var ScoreValueOne:Int! = 0
+    private var ScoreValueTwo:Int! = 0
+    private var ScoreKeyOne:String = "ScoreOne"
+    private var ScoreKeyTwo:String = "ScoreTwo"
     override func didMove(to view: SKView) {
-                for child in self.children {
+        
+        for child in self.children {
    
-            if let roomCount = child.name?.contains("R") {
+            if let roomCount = child.name?.contains("R"){
                 if roomCount{
                     red[child.name!]=0
                 }
@@ -39,6 +47,28 @@ class GameScene: SKScene{
             if child.name?.characters.count != nil{
                 if (child.name?.characters.count)! < 3{
                     boardplaces.append(child.name!)
+                }
+            }
+            if let roomCount = child.name?.contains("ScoreOne") {
+                if roomCount{
+                    ScoreTextOne = child as! SKLabelNode
+                    if let i = load(key: ScoreKeyOne) {
+                        ScoreValueOne = i
+                    } else {
+                        ScoreValueOne = 0
+                    }
+                    ScoreTextOne.text! = String(describing:ScoreValueOne!)
+                }
+            }
+            if let roomCount = child.name?.contains("ScoreTwo") {
+                if roomCount{
+                    ScoreTextTwo = child as! SKLabelNode
+                    if let i = load(key: ScoreKeyTwo) {
+                        ScoreValueTwo = i
+                    } else {
+                        ScoreValueTwo = 0
+                    }
+                    ScoreTextTwo.text! = String(describing:ScoreValueTwo!)
                 }
             }
             
@@ -84,14 +114,13 @@ class GameScene: SKScene{
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
 
         for touch: AnyObject in touches {
-            
             // detect touch in the scene
             let location = touch.location(in: self)
 
             let node = self.atPoint(location) //nodeAtPoint:location
+                self.scaleMode = SKSceneScaleMode.aspectFit
             
-        
-                if boardplaces.contains(node.name!) && !REMOVE_STAGE{
+                if boardplaces.contains(node.name!) && pieceSelected != nil && !REMOVE_STAGE{
                     if NINE_MEN_GAME_RULES.playerTurn() == 2 && !(node.name?.contains("R"))!{
                         let tmp = red[pieceSelected!.name!]
                         red = moveSelectedBrick(node: node,tmp: tmp!,team:red)
@@ -101,15 +130,15 @@ class GameScene: SKScene{
                     }
                 } else if !REMOVE_STAGE{
                     if (red[node.name!] != nil) && NINE_MEN_GAME_RULES.playerTurn() == 2 {
-                        selectPiece(node: node as! SKShapeNode)
+                        selectPiece(node: node as! SKSpriteNode)
                     }else if(blue[node.name!] != nil) && NINE_MEN_GAME_RULES.playerTurn() == 1 {
-                        selectPiece(node: node as! SKShapeNode)
+                        selectPiece(node: node as! SKSpriteNode)
                     }
                 }  else {
                 if (red[node.name!] != nil) && NINE_MEN_GAME_RULES.playerTurn() == 1 {
-                    red = selectPieceToRemove(node: node as! SKShapeNode,team: red)
+                    red = selectPieceToRemove(node: node as! SKSpriteNode,team: red)
                 }else if(blue[node.name!] != nil) && NINE_MEN_GAME_RULES.playerTurn() == 2 {
-                    blue = selectPieceToRemove(node: node as! SKShapeNode,team: blue)
+                    blue = selectPieceToRemove(node: node as! SKSpriteNode,team: blue)
                 }
             }
             
@@ -123,7 +152,6 @@ class GameScene: SKScene{
         if NINE_MEN_GAME_RULES.legalMove(To: Int(nodePos)!, From: tmp , color: NINE_MEN_GAME_RULES.playerTurn()){
             print("legal")
             team[(pieceSelected?.name!)!] = Int(node.name!)
-            //self.team[(pieceSelected?.name)!] = team[(pieceSelected?.name!)!]
             movePiece(node: node)
             
             if NINE_MEN_GAME_RULES.remove(to: Int(nodePos)!) {
@@ -136,10 +164,10 @@ class GameScene: SKScene{
         return team
     }
     
-    func selectPiece(node:SKShapeNode){
-        self.pieceSelected?.glowWidth = 1
+    func selectPiece(node:SKSpriteNode){
+        self.pieceSelected?.setScale(1)
         self.pieceSelected = node
-        node.glowWidth = 10.0
+        node.setScale(1.4)
     }
     func selectPieceToRemove(node:SKNode, team:[String:Int])->[String:Int]{
         var team = team
@@ -150,15 +178,28 @@ class GameScene: SKScene{
         }
         NINE_MEN_GAME_RULES.togglePlayerTurn()
         
+
         if NINE_MEN_GAME_RULES.win(color:NINE_MEN_GAME_RULES.colorToRemove()) {
-            print("game over")
             if let scene = SKScene(fileNamed: "GameScene") {
+                ScoreValueOne = Int(ScoreTextOne.text!)!
+                ScoreValueTwo = Int(ScoreTextTwo.text!)!
+                
                 self.removeAllChildren()
                 self.removeAllActions()
                 scene.scaleMode = .aspectFill
                 self.view?.presentScene(scene)
+                if NINE_MEN_GAME_RULES.playerTurn() == 1 {
+                    ScoreValueOne = ScoreValueOne + 1
+                    save(data: ScoreValueOne,key: ScoreKeyOne)
+                }
             }
+    
+        } else {
+            ScoreValueTwo = ScoreValueTwo + 1
+            save(data: ScoreValueTwo,key: ScoreKeyTwo)
         }
+   
+    
         return team
     }
     
@@ -166,7 +207,7 @@ class GameScene: SKScene{
         
         let moveAction = SKAction.move(to: node.position, duration: TimeInterval(0.5))
         self.pieceSelected?.run(moveAction, completion: {_ in
-            self.pieceSelected?.glowWidth = 1
+            self.pieceSelected?.setScale(1)
             self.pieceSelected = nil
         })
         
@@ -189,4 +230,12 @@ class GameScene: SKScene{
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
     }
+
+}
+public func load(key:String)->Int?{
+    return (UserDefaults.standard.value(forKey: key) as! Int?)
+}
+
+public func save(data: Int, key:String){
+    UserDefaults.standard.setValue(data, forKey: key)
 }
