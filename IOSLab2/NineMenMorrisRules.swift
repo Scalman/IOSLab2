@@ -34,7 +34,7 @@ class NineMenMorrisRules {
     
     
     init() {
-        for _ in 0...23{
+        for _ in 0...24{
             gameplan.append(0)
         }
         bluemarker = 9;
@@ -54,7 +54,8 @@ class NineMenMorrisRules {
                         gameplan[To] = RED_MARKER
                         redmarker -= 1
                         turn = BLUE_MOVES
-                        gameplan[From] = EMPTY_SPACE
+                        print("to ",To,"from ", From,"color ", color)
+                        //gameplan[From] = EMPTY_SPACE
                         return true
                     }
                 }
@@ -64,12 +65,15 @@ class NineMenMorrisRules {
                     if (valid == true) {
                         gameplan[To] = RED_MARKER
                         turn = BLUE_MOVES
-                        gameplan[From] = EMPTY_SPACE
+                        //gameplan[From] = EMPTY_SPACE
+                        print("to ",To,"from ", From,"color ", color)
                         return true;
                     } else {
+                        print("to ",To,"from ", From,"color ", color)
                         return false
                     }
                 } else {
+                    print("to ",To,"from ", From,"color ", color)
                     return false
 				}
             } else {
@@ -78,7 +82,8 @@ class NineMenMorrisRules {
                         gameplan[To] = BLUE_MARKER
                         bluemarker -= 1
                         turn = RED_MOVES
-                        gameplan[From] = EMPTY_SPACE
+                        //gameplan[From] = EMPTY_SPACE
+                        print("to ",To,"from ", From,"color ", color)
                         return true;
                     }
                 }
@@ -87,16 +92,20 @@ class NineMenMorrisRules {
                     if (valid == true) {
                         gameplan[To] = BLUE_MARKER;
                         turn = RED_MOVES;
-                        gameplan[From] = EMPTY_SPACE
+                        //gameplan[From] = EMPTY_SPACE
+                        print("to ",To,"from ", From,"color ", color)
                         return true;
                     } else {
+                        print("to ",To,"from ", From,"color ", color)
                         return false;
                     }
                 } else {
+                    print("to ",To,"from ", From,"color ", color)
                     return false;
 				}
             }
         } else {
+            print("to ",To,"from ", From,"color ", color)
             return false;
         }
     }
