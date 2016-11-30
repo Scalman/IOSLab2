@@ -54,7 +54,6 @@ class NineMenMorrisRules {
                         gameplan[To] = RED_MARKER
                         redmarker -= 1
                         turn = BLUE_MOVES
-                        print("to ",To,"from ", From,"color ", color)
                         //gameplan[From] = EMPTY_SPACE
                         return true
                     }
@@ -66,14 +65,11 @@ class NineMenMorrisRules {
                         gameplan[To] = RED_MARKER
                         turn = BLUE_MOVES
                         //gameplan[From] = EMPTY_SPACE
-                        print("to ",To,"from ", From,"color ", color)
                         return true;
                     } else {
-                        print("to ",To,"from ", From,"color ", color)
                         return false
                     }
                 } else {
-                    print("to ",To,"from ", From,"color ", color)
                     return false
 				}
             } else {
@@ -83,7 +79,6 @@ class NineMenMorrisRules {
                         bluemarker -= 1
                         turn = RED_MOVES
                         //gameplan[From] = EMPTY_SPACE
-                        print("to ",To,"from ", From,"color ", color)
                         return true;
                     }
                 }
@@ -93,19 +88,15 @@ class NineMenMorrisRules {
                         gameplan[To] = BLUE_MARKER;
                         turn = RED_MOVES;
                         //gameplan[From] = EMPTY_SPACE
-                        print("to ",To,"from ", From,"color ", color)
                         return true;
                     } else {
-                        print("to ",To,"from ", From,"color ", color)
                         return false;
                     }
                 } else {
-                    print("to ",To,"from ", From,"color ", color)
                     return false;
 				}
             }
         } else {
-            print("to ",To,"from ", From,"color ", color)
             return false;
         }
     }
@@ -255,7 +246,9 @@ class NineMenMorrisRules {
         }
         
     }
-    
+    func togglePlayerTurn () {
+        turn = turn == 1 ? 2:1
+    }
     func playerTurn() -> Int {
         return turn == 2 ? 2 : 1
     }
